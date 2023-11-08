@@ -1,0 +1,29 @@
+﻿@model List<adAdgenstvo.Models.Order>
+
+<h2>Заказы с контрактами</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id заказа</th>
+            <th>Дедлайн</th>
+            <th>Дата обращения</th>
+            <th>Статус</th>
+            <th>Айди агент</th>
+            <th>Клиент</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.Deadline.ToShortDateString()</td>
+                <td>@order.DateCreate.Value.ToShortDateString()</td>
+                <td>@order.Status</td>
+                <td>@order.AgentId</td>
+                <td>@order.ClientId</td>
+            </tr>
+        }
+    </tbody>
+</table>

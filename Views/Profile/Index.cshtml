@@ -1,0 +1,33 @@
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Личный кабинет";
+}
+
+<h2 class="text-center">Личный кабинет</h2>
+<br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <a asp-controller="Profile" asp-action="ViewProfile" asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value.Split('_')[0]" asp-route-role="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value.Split('_')[1]" class="btn btn-info">Посмотреть свой профиль</a>
+            </div>
+            <div class="mb-3">
+                <a asp-controller="Profile" asp-action="EditProfile" class="btn btn-warning">Редактировать свой профиль</a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <a asp-controller="Profile" asp-action="ViewOrders" asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value.Split('_')[0]" asp-route-role="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value.Split('_')[1]" class="btn btn-success">Посмотреть заказы</a>
+            </div>
+            <div class="mb-3">
+                <a asp-controller="Profile" asp-action="Requisition" asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value.Split('_')[0]" asp-route-role="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value.Split('_')[1]" class="btn btn-info">Посмотреть заявки</a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <a asp-controller="Profile" asp-action="CreateRequisition" class="btn btn-primary">Создать заявку</a>
+            </div>
+        </div>
+    </div>
+</div>

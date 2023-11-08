@@ -1,0 +1,44 @@
+﻿@model adAdgenstvo.Models.Worker
+
+<h2>Редактирование профиля работника</h2>
+
+<form asp-action="EditWorkerProfile" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Name">Имя:</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Patronymic">Отчество:</label>
+        <input asp-for="Patronymic" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Surname">Фамилия:</label>
+        <input asp-for="Surname" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="PhoneNumber">Номер телефона:</label>
+        <input asp-for="PhoneNumber" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Password">Пароль:</label>
+        <input asp-for="Password" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Email">Email:</label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Salary">Зарплата:</label>
+        <input asp-for="Salary" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="IdRole">Роль:</label>
+        <input asp-for="IdRole" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="IdPosition">Должность:</label>
+        <input asp-for="IdPosition" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+</form>
