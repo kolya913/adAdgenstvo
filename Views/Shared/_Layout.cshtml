@@ -34,7 +34,27 @@
                                                                 </svg>
                                 </div>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                    <li><a class="dropdown-item" asp-controller="User" asp-action="index">Личный кабинет</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" asp-controller="User" asp-action="Logout">Выход</a></li>
+                                </ul>
+                            </li> 
 
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="User" asp-action="Register">Регистрация</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="User" asp-action="Login">Вход</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
     <div id="notification" class="position-fixed top-0 end-0 p-3" style="z-index: 5">
         @if (TempData.ContainsKey("SuccessMessage"))
         {
