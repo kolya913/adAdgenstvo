@@ -1,0 +1,112 @@
+﻿
+@{
+    ViewData["Title"] = "Пользователи";
+}
+
+<style>
+    .flex-container {
+        display: flex;
+        gap: 3%;
+        flex-wrap: wrap;
+        flex: 1;
+    }
+
+    .flex-column {
+        display: flex;
+        padding: 10px;
+        box-sizing: border-box;
+        width: 15%;
+    }
+
+    #searchForm {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 15%;
+        position: sticky;
+        top: 20px;
+        margin-right: 15px;
+    }
+
+        #searchForm label {
+            margin-bottom: 5px;
+        }
+
+        #searchForm button {
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+    #clientsTableContainer {
+        flex: 1;
+        width: 100%;
+    }
+</style>
+
+
+<h2 class="justify-content-center">Пользователи</h2>
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">В кабинет</a>
+</div>
+
+
+<div class="flex-container">
+    <div class="flex-column" id="searchForm">
+        <label for="searchName">Имя:</label>
+        <input type="text" id="searchName" />
+        <label for="searchSurname">Фамилия:</label>
+        <input type="text" id="searchSurname" />
+        <label for="searchEmail">Email:</label>
+        <input type="text" id="searchEmail" />
+        <label for="searchPhoneNumber">Номер телефона:</label>
+        <input type="text" id="searchPhoneNumber" />
+        <label for="searchCompanyName">Название компании:</label>
+        <input type="text" id="searchCompanyName" />
+        <label for="searchCompanyName">Инн:</label>
+        <input type="text" id="searchInn" />
+        <button onclick="searchUsers()">Искать</button>
+    </div>
+
+    <div class="flex-column" id="usersTable">
+    </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    searchUsers();
+});
+
+
+    function searchUsers() {
+        var searchName = $('#searchName').val();
+        var searchSurname = $('#searchSurname').val();
+        var searchEmail = $('#searchEmail').val();
+        var searchPhoneNumber = $('#searchPhoneNumber').val();
+        var searchCompanyName = $('#searchCompanyName').val();
+        var searchInn = $('#searchInn').val();
+
+        $.ajax({
+            url: '@Url.Action("UsersPartial", "User")',
+            type: 'GET',
+            data: {
+                searchName: searchName,
+                searchSurname: searchSurname,
+                searchEmail: searchEmail,
+                searchPhoneNumber: searchPhoneNumber,
+                searchCompanyName: searchCompanyName,
+                searchInn: searchInn
+            },
+            success: function (result) {
+                $('#usersTable').html(result);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    }
+
+
+</script>

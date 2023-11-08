@@ -1,0 +1,125 @@
+﻿@model adAdgenstvo.Models.EditModels.UserEM
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Редактирование пользователя";
+}
+
+<h2>Редактирование пользователя</h2>
+
+
+<div id="notification" class="position-fixed top-0 end-0 p-3" style="z-index: 5">
+    @if (!string.IsNullOrEmpty(ViewBag.Success))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewBag.Success
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(ViewBag.Error))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewBag.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+</div>
+
+@if(Model != null)
+{
+    <form asp-action="Edit" method="post">
+    <input asp-for="Id" class="form-control" hidden/>
+    <div class="form-group">
+        <label asp-for="Name">Name:</label>
+        <input asp-for="Name" class="form-control"/>
+        <span asp-validation-for="Name"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Patronymic">Patronymic:</label>
+        <input asp-for="Patronymic" class="form-control" />
+        <span asp-validation-for="Patronymic"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Lastname">Lastname:</label>
+        <input asp-for="Lastname" class="form-control"/>
+        <span asp-validation-for="Lastname"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password">Password:</label>
+        <input asp-for="Password" class="form-control" value="" type="password"/>
+        <span asp-validation-for="Password"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email">Email:</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PhoneNumber">Phone Number:</label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber"></span>
+    </div>
+
+    @if (User.IsInRole("Agent"))
+        {
+            <div class="form-group">
+                <label asp-for="Inn">INN:</label>
+                <input asp-for="Inn" class="form-control" required/>
+                <span asp-validation-for="Inn"></span>
+            </div>
+
+            
+                <input type="hidden" name="PositionId" value="@Model.PositionId" />
+        }
+        else
+        {
+            <div class="form-group">
+                <label asp-for="Inn">INN:</label>
+                <input asp-for="Inn" class="form-control"/>
+                <span asp-validation-for="Inn"></span>
+            </div>
+        }
+
+   
+    @if (User.IsInRole("Cleint"))
+    {
+        <div class="form-group">
+            <label asp-for="NameCompany">Company Name:</label>
+            <input asp-for="NameCompany" class="form-control" />
+            <span asp-validation-for="NameCompany"></span>
+        </div>
+    }
+    
+
+        @if (User.IsInRole("Admin") && int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)) != Model.Id && ViewBag.Positions != null)
+        {
+            <div class="form-group">
+                <label asp-for="PositionId">Position:</label>
+                <select asp-for="PositionId" asp-items="@(ViewBag.Positions)" class="form-control" required></select>
+                <span asp-validation-for="PositionId"></span>
+            </div>
+        }
+        else @if (User.IsInRole("Admin") && int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)) == Model.Id && ViewBag.Positions != null)
+        {
+            <div class="form-group">
+                <label asp-for="PositionId">Position:</label>
+                <select asp-for="PositionId" asp-items="@(ViewBag.Positions)" class="form-control" hidden></select>
+                <span asp-validation-for="PositionId"></span>
+                <input type="hidden" name="PositionId" value="@Model.PositionId" />
+            </div>
+        }
+        
+    <br>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+</form>
+}
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">В кабинет</a>
+</div>

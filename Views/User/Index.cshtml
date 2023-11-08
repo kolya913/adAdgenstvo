@@ -1,0 +1,35 @@
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Личный кабинет";
+}
+
+<h2 class="text-center">Личный кабинет</h2>
+<br>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-sm-12">
+            <div class="mb-3 d-flex flex-wrap justify-content-center">
+                <a asp-controller="User" asp-action="Edit" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)" class="btn btn-warning m-1">Профиль</a>
+                <a asp-controller="Orders" asp-action="ViewOrders" class="btn btn-success m-1">Заказы/Заявки</a>
+                @if (User.IsInRole("Client"))
+                {
+                    <a asp-controller="Orders" asp-action="CreateRequisition" class="btn btn-danger m-1">создать заявку</a>
+                }
+                @if (User.IsInRole("Agent") || User.IsInRole("Admin"))
+                {
+                    <a asp-controller="User" asp-action="Register" class="btn btn-danger m-1">Создать клиента</a>
+                    <a asp-controller="User" asp-action="Users" class="btn btn-danger m-1">Список клиентов</a>
+                    <a asp-controller="Service" asp-action="ServicesType" class="btn btn-danger m-1">Вся реклама</a>
+                }
+                @if(User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Profile" asp-action="ViewWorkers" class="btn btn-danger m-1">Список работников</a>
+                    <a asp-controller="User" asp-action="Register" class="btn btn-danger m-1">Регистрация работников</a>
+                    <a asp-controller="Webs" asp-action="Index" class="btn btn-danger m-1">Web сервисы</a>
+                    <a asp-controller="Addresses" asp-action="Index" class="btn btn-danger m-1">адресы</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

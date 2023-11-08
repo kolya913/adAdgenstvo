@@ -1,0 +1,94 @@
+﻿@model adAdgenstvo.Models.RegisterModel.ClientRM
+
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post" id="registrationForm">
+                <div class="form-group">
+                    <label for="Email">Адрес почты:</label>
+                    <input type="email" id="Email" name="Email" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="Password">Пароль:</label>
+                    <input type="password" id="Password" name="Password" class="form-control" required />
+                    <small class="form-text text-danger">Пароль должен содержать от 6 до 64 символов, включая латинские буквы, цифры и спецзнаки. Как минимум должна быть одна заглавная буква и один спецзнак.</small>
+                </div>
+                <div class="form-group">
+                    <label for="ConfirmPassword">Подтвердите пароль:</label>
+                    <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control" required />
+                    <small id="passwordHelp" class="form-text"></small>
+                </div>
+                <div class="form-group">
+                    <label for="PhoneNumber">Номер телефона:</label>
+                    <input type="tel" id="PhoneNumber" name="PhoneNumber" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="Name">Имя:</label>
+                    <input type="text" id="Name" name="Name" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="NameCompany">Название компании:</label>
+                    <input type="text" id="NameCompany" name="NameCompany" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="Patronymic">Отчество:</label>
+                    <input type="text" id="Patronymic" name="Patronymic" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="LastName">Фамилия:</label>
+                    <input type="text" id="LastName" name="LastName" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="Inn">ИНН:</label>
+                    <input type="text" id="Inn" name="Inn" class="form-control" />
+                    <small class="form-text text-warning">Инн не обязателен. Он используется для высталения счета. Его можно будет ввести потом.</small>
+                </div>
+                @if (User.IsInRole("Admin") && ViewBag.Positions != null)
+                {
+                    <div class="form-group">
+                        <label asp-for="PositionId">Position:</label>
+                        <select asp-for="PositionId" asp-items="@(ViewBag.Positions)" class="form-control"></select>
+                        <span asp-validation-for="PositionId"></span>
+                    </div>
+                }
+                <br>
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    var registrationForm = document.getElementById("registrationForm");
+    var email = document.getElementById("Email");
+    var password = document.getElementById("Password");
+    var confirmPassword = document.getElementById("ConfirmPassword");
+    var phoneNumber = document.getElementById("PhoneNumber");
+    var name = document.getElementById("Name");
+    var lastName = document.getElementById("LastName");
+    var inn = document.getElementById("Inn");
+    var passwordHelp = document.getElementById("passwordHelp");
+
+    function validatePassword() {
+        if (password.value !== confirmPassword.value) {
+            passwordHelp.textContent = "Пароли не совпадают.";
+            passwordHelp.style.color = "red";
+        } else {
+            passwordHelp.textContent = "Пароли совпадают.";
+            passwordHelp.style.color = "green";
+        }
+    }
+
+    password.onchange = validatePassword;
+    confirmPassword.onkeyup = validatePassword;
+
+    registrationForm.addEventListener("submit", onSubmitForm);
+</script>

@@ -18,4 +18,19 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
   </ItemGroup>
 
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.11" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\media\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\Orders\ShowLayout.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

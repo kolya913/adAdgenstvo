@@ -1,0 +1,56 @@
+﻿@model IEnumerable<adAdgenstvo.Models.DataBaseModels.User>
+
+<table class="table" id="usersTable">
+    <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Отчество</th>
+            <th>Фамилия</th>
+            <th>Номер</th>
+            <th>Почта</th>
+            <th>Инн</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var User in Model)
+        {
+            <tr data-user-id="@User.Id">
+                <td>@User.Name</td>
+                <td>@User.Patronymic</td>
+                <td>@User.Lastname</td>
+                <td>@User.PhoneNumber</td>
+                <td>@User.Email</td>
+                <td>@User.Inn</td>
+                <td>
+                    <a asp-controller="User" asp-action="Edit" asp-route-id="@User.Id" class="btn btn-warning m-1">Редактировать</a>
+                    <button class="btn btn-danger" onclick=deleteClient(@User.Id)>Удалить</button>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    function deleteClient(userId) {
+        if (confirm('Вы уверены в удаление?')) {
+            $.ajax({
+                url: '@Url.Action("DeleteUser", "User")',
+                type: 'POST',
+                data: { userId: userId },
+                success: function (result) {
+                    if (result.success) {
+                        alert(result.message);
+                        $('#usersTable').find('tr[data-user-id="' + userId + '"]').remove();
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function (error) {
+                    console.error(error);
+                }
+            });
+        }
+    }
+</script>

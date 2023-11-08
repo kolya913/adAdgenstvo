@@ -34,27 +34,24 @@
                                                                 </svg>
                                 </div>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                                    <li><a class="dropdown-item" asp-controller="Profile" asp-action="index">Личный кабинет</a></li>
-                                    <li><hr class="dropdown-divider" /></li>
-                                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Logout">Выход</a></li>
-                                </ul>
-                            </li> 
 
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Register">Регистрация</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Login">Вход</a>
-                            </li>
-                        }
-                    </ul>
-                </div>
+    <div id="notification" class="position-fixed top-0 end-0 p-3" style="z-index: 5">
+        @if (TempData.ContainsKey("SuccessMessage"))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        </nav>
-    </header>
+        }
+        else if (TempData.ContainsKey("ErrorMessage"))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+    </div>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
