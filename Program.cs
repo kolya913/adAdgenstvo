@@ -23,9 +23,8 @@ namespace adAdgenstvo
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "/Home/Login";
-                    options.LogoutPath = "/Home/Logout";
-
+                    options.LoginPath = "/User/Login";
+                    options.LogoutPath = "/User/Logout";
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
                 });
 
@@ -46,7 +45,7 @@ namespace adAdgenstvo
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=Index}");
 
             app.Run();
         }
