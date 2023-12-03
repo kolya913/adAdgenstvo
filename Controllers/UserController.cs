@@ -156,7 +156,7 @@ namespace adAdgenstvo.Controllers
         }
 
         [Authorize(Roles = "Admin, Agent")]
-        public async Task<IActionResult> UsersPartial(string? searchName = null, string? searchSurname = null, 
+        public async Task<IActionResult> UsersPartial(string? searchName = null, string? searchSurname = null,
             string? searchEmail = null, string? searchPhoneNumber = null, string? searchCompanyName = null, string? searchInn = null)
         {
             IQueryable<User> usersQuery = _context.Users.Include(u => u.Role);

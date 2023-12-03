@@ -13,4 +13,6 @@ public class MDBContext : DbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Role> Roles { get; set; } = null!;
     public DbSet<Position> Positions { get; set; } = null!;
+    public DbSet<ServiceType> ServiceTypes { get; set; } = null!; 
+    public DbSet<Service> Services { get; set; } = null!;
 }

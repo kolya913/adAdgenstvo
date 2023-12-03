@@ -1,0 +1,36 @@
+﻿@model adAdgenstvo.Models.CreateModels.ServiceTypeCM
+
+<h2>Create Service Type</h2>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+
+<form asp-action="CreateServiceType" method="post">
+    <div class="form-group">
+        <label asp-for="ShortName">Short Name:</label>
+        <input asp-for="ShortName" class="form-control" />
+        <span asp-validation-for="ShortName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description">Description:</label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Type">Type:</label>
+        <select asp-for="Type" asp-items="@(new SelectList(ViewBag.Types))" class="form-control">
+            <option value="">Выберите тип</option>
+        </select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+<br />
+<a class="btn btn-secondary" asp-action="Index" asp-controller="Service">К списку</a>

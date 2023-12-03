@@ -1,11 +1,16 @@
-﻿namespace adAdgenstvo.Models.CreateModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace adAdgenstvo.Models.CreateModels
 {
     public class ServiceTypeCM
     {
-        public required string ShortName { get; set; }
-        public required string Description { get; set; }
-        public required string Type { get; set; }
-        public string? Status { get; set; }
+        [Required(ErrorMessage = "Обязательно")]
+        public string ShortName { get; set; }
 
+        [Required(ErrorMessage = "Обязательно")]
+        public string Description { get; set; }
+
+        [Required(ErrorMessage = "Обязательно")]
+        public string Type { get; set; }
     }
 }
