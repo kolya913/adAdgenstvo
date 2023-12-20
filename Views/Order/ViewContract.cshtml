@@ -1,0 +1,38 @@
+﻿@model adAdgenstvo.Models.DataBaseModels.Contract
+
+<h2>Contract Details</h2>
+
+<table class="table">
+    <tr>
+        <th>Id</th>
+        <td>@Model.Id</td>
+    </tr>
+    <tr>
+        <th>Order ID</th>
+        <td>@Model.OrderId</td>
+    </tr>
+    <tr>
+        <th>Price</th>
+        <td>@Model.Price</td>
+    </tr>
+    <tr>
+        <th>Date Start Company</th>
+        <td>@Model.DateStartCompany</td>
+    </tr>
+    <tr>
+        <th>Date End Company</th>
+        <td>@Model.DateEndCompany</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>@Model.Status</td>
+    </tr>
+</table>
+
+@if (User.IsInRole("Client"))
+{
+    <a href="@Url.Action("ChangeStatusOrder", "Order", new { orderId = @Model.OrderId, status = "needPayment"  })" class="btn btn-danger">Подписать</a>
+    <a href="@Url.Action("ChangeStatusOrder", "Order", new { orderId = @Model.OrderId, status = "canceled"  })" class="btn btn-danger">Отказаться</a>
+}
+
+<a asp-action="Index">Back to List</a>

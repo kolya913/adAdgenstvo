@@ -1,0 +1,31 @@
+﻿@model adAdgenstvo.Models.DataBaseModels.Contract
+
+
+<h2>Create Contract</h2>
+
+<form asp-action="CreateContract" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="OrderId" />
+
+    <div class="form-group">
+        <label asp-for="Price" class="control-label">Price</label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DateStartCompany" class="control-label">Date Start Company</label>
+        <input asp-for="DateStartCompany" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        <span asp-validation-for="DateStartCompany" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DateEndCompany" class="control-label">Date End Company</label>
+        <input asp-for="DateEndCompany" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        <span asp-validation-for="DateEndCompany" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>

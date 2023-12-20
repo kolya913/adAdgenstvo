@@ -20,10 +20,10 @@ namespace adAdgenstvo.Models.DataBaseModels
         
         public ServiceType(ServiceTypeCM serviceTypeCM)
         {
-            ShortName = serviceTypeCM?.ShortName ?? throw new ArgumentNullException(nameof(serviceTypeCM), "ServiceTypeCM must not be null");
-            Description = serviceTypeCM?.Description ?? throw new ArgumentNullException(nameof(serviceTypeCM), "ServiceTypeCM must not be null");
-            Type = serviceTypeCM?.Type ?? throw new ArgumentNullException(nameof(serviceTypeCM), "ServiceTypeCM must not be null");
-            Status = "Hidden";
+            ShortName = serviceTypeCM?.ShortName ;
+            Description = serviceTypeCM?.Description;
+            Type = serviceTypeCM?.Type;
+            Status = null;
         }
 
         public ServiceType Update(ServiceTypeEM serviceTypeEM)

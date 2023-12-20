@@ -1,0 +1,44 @@
+﻿@model adAdgenstvo.Models.CreateRequisitionModel
+
+<h2>Создать заявку</h2>
+<div>
+    <a asp-action="Index" class="btn btn-secondary">К заказам</a>
+</div>
+@if(Model != null)
+{
+    <form asp-action="Create" method="post">
+            @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TextField)
+            @Html.TextBoxFor(model => model.TextField, new { @class = "form-control", required = "required" })
+            @Html.ValidationMessageFor(model => model.TextField, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Services, "Выберите услуги")
+            <div>
+                @for (var i = 0; i < Model.Services.Count; i++)
+                {
+                    <div class="form-check">
+                        <input type="checkbox" id="service-@Model.Services[i].Id" name="SelectedServiceIds" value="@Model.Services[i].Id" class="form-check-input" />
+                        <label for="service-@Model.Services[i].Id" class="form-check-label">@Model.Services[i].Name</label>
+                    </div>
+                    <text>Цена:@Model.Services[i].Price Количесвто:@Model.Services[i].Count Время:@Model.Services[i].TimeToProduce</text> <br /><br /> 
+                }
+            </div>
+        </div>
+
+
+
+        <button type="submit" class="btn btn-primary">Создать заявку</button>
+    </form>
+
+
+    @section Scripts {
+    @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+}
+

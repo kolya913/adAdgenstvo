@@ -1,0 +1,140 @@
+﻿@model IEnumerable<adAdgenstvo.Models.DataBaseModels.Order>
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<p>
+    <a asp-action="Index" asp-controller="User" class="btn btn-secondary">В кабинет</a>
+    @if (User.IsInRole("Client"))
+    {
+        <a asp-controller="Order" asp-action="Create" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)" class="btn btn-danger m-1">создать заявку</a>
+    }
+</p>
+
+<div>
+    <label for="searchId">Id:</label>
+    <input type="number" id="searchId" />
+
+    <label for="searchClientId">ClientId:</label>
+    <input type="number" id="searchClientId" />
+
+    <label for="searchAgentId">AgentId:</label>
+    <input type="number" id="searchAgentId" />
+
+    <label for="searchStatus">Status:</label>
+    <input type="text" id="searchStatus" />
+
+    <label for="searchNullAgent">Null Agent:</label>
+    <input type="checkbox" id="searchNullAgent" />
+</div>
+
+<div id="orderTablePartialContainer">
+    @await Html.PartialAsync("_OrderTablePartial", Model)
+</div>
+
+@section Scripts {
+    <script>
+        function loadOrders() {
+            var searchId = $("#searchId").val();
+            var searchClientId = $("#searchClientId").val();
+            var searchAgentId = $("#searchAgentId").val();
+            var searchStatus = $("#searchStatus").val();
+            var searchNullAgent = $("#searchNullAgent").prop("checked");
+
+            $.ajax({
+                url: '@Url.Action("LoadOrders", "Order")',
+                type: 'GET',
+                data: {
+                    searchId: searchId,
+                    searchClientId: searchClientId,
+                    searchAgentId: searchAgentId,
+                    searchStatus: searchStatus,
+                    searchNullAgent: searchNullAgent
+                },
+                success: function (result) {
+                    $("#orderTablePartialContainer").html(result);
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+        $(document).ready(function () {
+            loadOrders();
+            $("#searchButton").on("click", function () {
+                loadOrders();
+            });
+            $("#searchId, #searchClientId, #searchAgentId, #searchStatus, #searchNullAgent").on("change", function () {
+                loadOrders();
+            });
+        });
+    </script>
+}
+
+
+
+@* <table class="table">
+    <thead>
+        <tr>
+            <th>
+                Дата создания
+            </th>
+            <th>
+                Статус
+            </th>
+            <th>
+                Клиент
+            </th>
+            <th>
+                Агент
+            </th>
+            <th>
+                Текст заказа
+            </th>
+            <th>
+                Действия
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @item.DateCreate
+            </td>
+            <td>
+                @item.Status
+            </td>
+            <td>
+                    <text>@item.Client.Id | @item.Client.Name @item.Client.Lastname </text>
+            </td>
+            <td>
+                @if(item.Agent != null)
+                    {
+                        <text>@item.Agent.Id | @item.Agent.Name @item.Agent.Lastname </text>
+                    }
+                    else
+                    {
+                        <text>не назначен</text>
+                    }
+            </td>
+            <td>
+                @item.Text
+            </td>
+            <td>
+                    @if(User.IsInRole("Client"))
+                    {
+
+                    }
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Редактировать</a>
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Информация</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Отменить</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+ *@

@@ -1,8 +1,52 @@
-﻿@{
+﻿@model Tuple<List<adAdgenstvo.Models.DataBaseModels.ServiceType>, List<adAdgenstvo.Models.DataBaseModels.Service>>
+@{
     ViewData["Title"] = "Главная";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+
+<style>
+    .service-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .service-item {
+        flex: 0 0 20%;
+        margin: 10px;
+    }
+</style>
+
+<h1>Наша реклама</h1>
+@if (Model != null)
+{
+    <div class="service-container">
+        @foreach (var typeService in Model.Item1)
+        {
+            <div class="service-item">
+                <h3>@typeService.ShortName</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Название</th>
+                            <th>Описание</th>
+                            <th>Подробнее</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var service in Model.Item2.Where(s => s.ServiceTypeId == typeService.Id))
+                        {
+                            <tr>
+                                <td>@service.Id</td>
+                                <td>@service.Name</td>
+                                <td>@service.ShortDescription</td>
+                                <td><a asp-action="Price" asp-controller="Home" asp-route-id="@service.Id" class="btn btn-primary">Цены</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+}

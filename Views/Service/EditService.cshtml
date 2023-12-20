@@ -1,0 +1,24 @@
+﻿@model adAdgenstvo.Models.EditModels.ServiceEM
+
+<h2>Редактирование услуги</h2>
+
+<form asp-action="EditService" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Name" class="control-label">Название:</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ShortDescription" class="control-label">Краткое описание:</label>
+        <textarea asp-for="ShortDescription" class="form-control"></textarea>
+    </div>
+      
+    <br />
+    <div class="form-group">
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+    </div>
+</form>
+<br />
+<a class="btn btn-secondary" asp-action="Index" asp-controller="Service">К списку</a>

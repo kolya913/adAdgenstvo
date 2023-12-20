@@ -15,7 +15,6 @@ namespace adAdgenstvo.Controllers
     [Authorize]
     public class UserController : Controller
     {
-
         private readonly MDBContext _context;
         private readonly ILogger<UserController> _logger;
 
@@ -72,6 +71,7 @@ namespace adAdgenstvo.Controllers
         [AllowAnonymous]
         public ActionResult Login()
         {
+            TempData["ReturnUrl"] = Request.Headers["Referer"].ToString();
             return View();
         }
 
@@ -85,8 +85,13 @@ namespace adAdgenstvo.Controllers
 
                 if (user != null)
                 {
-
                     await Authenticate(user);
+                    if (TempData.TryGetValue("ReturnUrl", out var returnUrl) && !string.IsNullOrEmpty(returnUrl.ToString()))
+                    {
+                        TempData.Remove("ReturnUrl");
+                        return Redirect(returnUrl.ToString());
+                    }
+
                     return RedirectToAction("Index", "Home");
                 }
                 ModelState.AddModelError(string.Empty, "Не правильный адрес почта или пароль");
@@ -101,6 +106,13 @@ namespace adAdgenstvo.Controllers
             var roleClaim = new Claim(ClaimTypes.Role, user.Role.RoleName);
             var claimsIdentity = new ClaimsIdentity(new[] { idClaim, nameClaim, roleClaim }, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(claimsIdentity);
+            var authProperties = new AuthenticationProperties
+            {
+                ExpiresUtc = DateTime.UtcNow.AddMinutes(5),
+                IsPersistent = true,
+                AllowRefresh = true
+            };
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
         }
 
@@ -135,7 +147,7 @@ namespace adAdgenstvo.Controllers
         }
 
         [HttpPost]
-        //[AutoValidateAntiforgeryToken]
+        //[AutoValidateAntiforgeryToken] // TODO: autovalidateanti...
         public async Task<IActionResult> Edit(UserEM editModel)
         {
             if (ModelState.IsValid)

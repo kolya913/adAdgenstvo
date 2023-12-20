@@ -23,11 +23,11 @@ namespace adAdgenstvo.Models.RegisterModel
         
         public string? NameCompany { get; set; }
         
-        [RegularExpression(@"^[a-zA-Zа-яА-Я]+$", ErrorMessage = "Имя должно состоять только из кириллических или латинских букв.")]
+        [RegularExpression(@"^[a-zA-Zа-яА-Я]+$", ErrorMessage = "Отчество должно состоять только из кириллических или латинских букв.")]
         public string? Patronymic { get; set; }
         
         [Required(ErrorMessage = "Фамилия обязательна")]
-        [RegularExpression(@"^[a-zA-Zа-яА-Я]+$", ErrorMessage = "Имя должно состоять только из кириллических или латинских букв.")]
+        [RegularExpression(@"^[a-zA-Zа-яА-Я]+$", ErrorMessage = "Фамилия должно состоять только из кириллических или латинских букв.")]
         public required string LastName { get; set; }
        
         [StringLength(12, MinimumLength = 10, ErrorMessage = "ИНН должен содержать от 10 до 12 цифр.")]

@@ -1,0 +1,25 @@
+﻿@model List<adAdgenstvo.Models.DataBaseModels.PriceService>
+
+<h2>Цены для рекламы</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Цена</th>
+            <th>Количество</th>
+            <th>Время производства</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var priceService in Model)
+        {
+            <tr>
+                <td>@priceService.Name</td>
+                <td>@priceService.Price</td>
+                <td>@priceService.Count</td>
+                <td>@priceService.TimeToProduce</td>
+            </tr>
+        }
+    </tbody>
+</table>

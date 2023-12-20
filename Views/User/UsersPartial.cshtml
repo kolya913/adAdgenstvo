@@ -23,8 +23,14 @@
                 <td>@User.Email</td>
                 <td>@User.Inn</td>
                 <td>
+                    @if(User.PositionId == null)
+                    {
+                        <a asp-controller="Order" asp-action="Create" asp-route-id="@User.Id" class="btn btn-danger m-1">создать заявку</a>
+                    }
                     <a asp-controller="User" asp-action="Edit" asp-route-id="@User.Id" class="btn btn-warning m-1">Редактировать</a>
                     <button class="btn btn-danger" onclick=deleteClient(@User.Id)>Удалить</button>
+                    
+                    
                 </td>
 
             </tr>

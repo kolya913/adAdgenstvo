@@ -1,0 +1,106 @@
+﻿@model adAdgenstvo.Models.DataBaseModels.LayoutProject
+<style>
+
+    .media-column {
+        max-width: 75%;
+        margin: auto;
+        text-align: center;
+    }
+
+        .media-column img,
+        .media-column video {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+    .media-caption {
+        margin-top: 5px;
+    }
+
+    .download-button,
+    .delete-button {
+        margin-top: 10px;
+    }
+</style>
+
+<<h2>Проект №@Model.OrderId</h2>
+
+<form asp-action="EditLayout" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="OrderId" />
+
+    <div class="form-group">
+        <label asp-for="Text">Text:</label>
+        <textarea asp-for="Text" class="form-control">@Model.Text</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="media">Upload Media:</label>
+        <div id="mediaInputs">
+            <input type="file" name="files" class="form-control-file">
+        </div>
+    </div>
+
+    @if (Model.Photos != null && Model.Photos.Any())
+    {
+        <h3>Existing Media</h3>
+        <div class="media-column">
+            @foreach (var media in Model.Photos)
+            {
+                <div>
+                    @if (media.IsImage)
+                    {
+                        <img src="@Url.Content("~/" + media.Path)" alt="@media.Title" />
+                    }
+                    else if (media.IsVideo)
+                    {
+                        <video width="640" height="360" controls>
+                            <source src="@Url.Content("~/" + media.Path)" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    }
+                    <div class="media-caption">@media.Title</div>
+                    <a href="@Url.Content("~/" + media.Path)" class="btn btn-primary download-button" download>Download</a>
+                    <button type="button" class="btn btn-danger delete-button" data-id="@media.Id">Delete</button>
+                </div>
+            }
+        </div>
+    }
+
+    <div id="additionalMedia"></div>
+    <button type="button" class="btn btn-success" id="addMediaButton">Add Media</button>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('.delete-button').click(function () {
+                var photoId = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("DeletePhoto", "Order")',
+                    type: 'POST',
+                    data: { photoId: photoId },
+                    success: function () {
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error deleting photo:', error);
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        document.getElementById('addMediaButton').addEventListener('click', function () {
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.name = 'files';
+            input.className = 'form-control-file';
+            document.getElementById('mediaInputs').appendChild(input);
+        });
+    </script>
+}
+
+

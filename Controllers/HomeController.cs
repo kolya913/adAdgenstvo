@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using adAdgenstvo.Models.DataBaseModels;
 
 namespace adAdgenstvo.Controllers
 {
@@ -20,10 +21,28 @@ namespace adAdgenstvo.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            List<ServiceType> typeServices = await _context.ServiceTypes.ToListAsync();
+            List<Service> services = await _context.Services.ToListAsync();
+            var groupedServices = services.GroupBy(s => s.ServiceTypeId).ToDictionary(g => g.Key, g => g.ToList());
+            var model = new Tuple<List<ServiceType>, List<Service>>(typeServices, services);
+            return View(model);
         }
+
+        public async Task<IActionResult> Price(int id)
+        {
+            var service = await _context.PriceService
+                .Include(s => s.Service)
+                .Where(s => s.ServiceId == id).ToListAsync();
+
+            if (service == null)
+            {
+                return NotFound();
+            }
+            return View(service);
+        }
+
 
         public IActionResult Privacy()
         {

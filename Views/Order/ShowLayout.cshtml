@@ -1,0 +1,66 @@
+﻿@model adAdgenstvo.Models.DataBaseModels.LayoutProject
+
+@{
+    var doing = TempData["doing"] as string;
+}
+
+
+<style>
+    .photo-column {
+        max-width: 75%;
+        margin: auto;
+        text-align: center;
+    }
+
+        .photo-column img {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+    .photo-caption {
+        margin-top: 5px;
+    }
+
+    .download-button {
+        margin-top: 10px;
+    }
+</style>
+
+<h2>Проект</h2>
+
+@if (Model != null)
+{
+    <p><strong>Text:</strong> @Model.Text</p>
+
+    @if (Model.Photos != null && Model.Photos.Any())
+    {
+        <h3>Photos</h3>
+        <div class="photo-column">
+            @foreach (var photo in Model.Photos)
+            {
+                <div>
+                    <img src="@Url.Content("~/" + photo.Path)" alt="@photo.Title" />
+                    <div class="photo-caption">@photo.Title</div>
+                    <a href="@Url.Content("~/" + photo.Path)" class="btn btn-primary download-button" download>Download</a>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No photos available for the project.</p>
+    }
+    @if (doing == "needAproved")
+    {
+        <form asp-action="ChangeStatusOrder" asp-route-orderId="@Model.OrderId" asp-route-status="clientAproved" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-success">Согласиться</button>
+        </form>
+        <form asp-action="ChangeStatusOrder" asp-route-orderId="@Model.OrderId" asp-route-status="reWorkProject" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger">Отказаться</button>
+        </form>
+    }
+}
+else
+{
+    <p>No data available for the project.</p>
+}

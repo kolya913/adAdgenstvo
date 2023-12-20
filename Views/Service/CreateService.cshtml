@@ -6,28 +6,27 @@
 
 {
     <form asp-action="CreateService" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="ShortDescription"></label>
-        <textarea asp-for="ShortDescription" class="form-control"></textarea>
-        <span asp-validation-for="ShortDescription" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label asp-for="ShortDescription"></label>
+            <textarea asp-for="ShortDescription" class="form-control"></textarea>
+            <span asp-validation-for="ShortDescription" class="text-danger"></span>
+        </div>
 
-    <input type="hidden" asp-for="ServiceTypeId" value="@ViewBag.TypeId" />
+        <input type="hidden" asp-for="ServiceTypeId" value="@ViewBag.TypeId" />
 
-    <div class="form-group">
-        <button type="submit" class="btn btn-success">Create</button>
-    </div>
-</form>
+        <div class="form-group">
+            <button type="submit" class="btn btn-success">Create</button>
+        </div>
+    </form>
 }
 
 
 
-<a asp-action="Index">Back to List</a>
+<a asp-action="Index" class="btn btn-secondary" >Back to List</a>

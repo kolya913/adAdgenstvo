@@ -7,23 +7,6 @@
 <h2>Редактирование пользователя</h2>
 
 
-<div id="notification" class="position-fixed top-0 end-0 p-3" style="z-index: 5">
-    @if (!string.IsNullOrEmpty(ViewBag.Success))
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @ViewBag.Success
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-    else if (!string.IsNullOrEmpty(ViewBag.Error))
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @ViewBag.Error
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-</div>
-
 @if(Model != null)
 {
     <form asp-action="Edit" method="post">
@@ -95,21 +78,12 @@
     }
     
 
-        @if (User.IsInRole("Admin") && int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)) != Model.Id && ViewBag.Positions != null)
+        @if (User.IsInRole("Admin") && ViewBag.Positions != null)
         {
             <div class="form-group">
                 <label asp-for="PositionId">Position:</label>
                 <select asp-for="PositionId" asp-items="@(ViewBag.Positions)" class="form-control" required></select>
                 <span asp-validation-for="PositionId"></span>
-            </div>
-        }
-        else @if (User.IsInRole("Admin") && int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)) == Model.Id && ViewBag.Positions != null)
-        {
-            <div class="form-group">
-                <label asp-for="PositionId">Position:</label>
-                <select asp-for="PositionId" asp-items="@(ViewBag.Positions)" class="form-control" hidden></select>
-                <span asp-validation-for="PositionId"></span>
-                <input type="hidden" name="PositionId" value="@Model.PositionId" />
             </div>
         }
         

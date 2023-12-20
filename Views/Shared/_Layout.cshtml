@@ -70,6 +70,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         }
+        else if (TempData.ContainsKey("WarningMessage"))
+        {
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                @TempData["WarningMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
     </div>
 
     <div class="container">

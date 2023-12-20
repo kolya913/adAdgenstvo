@@ -1,0 +1,30 @@
+﻿@model adAdgenstvo.Models.DataBaseModels.Order
+
+@{
+    ViewData["Title"] = "Удаление";
+}
+
+<h1>Удалить</h1>
+
+<div>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Дата создания
+        </dt>
+        <dd class = "col-sm-10">
+           @Model.DateCreate
+        </dd>
+        <dt class = "col-sm-2">
+            Текст
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.Text
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-secondary">К заказам</a>
+    </form>
+</div>

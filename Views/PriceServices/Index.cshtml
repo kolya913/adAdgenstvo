@@ -1,0 +1,71 @@
+﻿
+@model List<adAdgenstvo.Models.DataBaseModels.PriceService>
+
+@{
+    ViewData["Title"] = "Цены";
+}
+
+<h2>Цены</h2>
+<a asp-action="Index" asp-controller="User" class="btn btn-secondary">В кабинет</a>
+<a asp-action="Index" asp-controller="Service" class="btn btn-secondary">Все услуги</a>
+<a asp-action="Create" class="btn btn-success">Создать</a>
+
+<form id="searchForm" asp-action="Index" asp-controller="PriceServices" method="get">
+    <input type="hidden" name="id" value="@ViewData["CurrentId"]" />
+
+</form>
+
+<div id="searchResult">
+</div>
+
+
+
+@Html.Partial("_PriceTable", Model)
+
+<script>
+
+    function clearSearch() {
+        $('#searchForm input[name="searchString"]').val('');
+        searchPriceServices();
+    }
+
+    function deletePriceService(id) {
+        if (confirm('Вы уверены, что хотите удалить?')) {
+            $.ajax({
+                url: '@Url.Action("Delete", "PriceServices")',
+                type: 'POST',
+                data: { id: id },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        alert(result.message);
+                        $('.table').find('tr[data-price-service-id="' + id + '"]').remove();
+                    } else {
+                        alert('Ошибка при удалении цены1. ' + result.message);
+                    }
+                },
+                error: function (error) {
+                    alert('Ошибка при удалении цены22. ' + error.responseText);
+                }
+            });
+        }
+    }
+
+    function searchPriceServices() {
+        var searchString = $('#searchForm input[name="searchString"]').val();
+        var id = $('#searchForm input[name="id"]').val();
+
+        $.ajax({
+            url: '@Url.Action("Search", "PriceServices")',
+            type: 'GET',
+            data: { id: id, searchString: searchString },
+            success: function (result) {
+                $('#searchResult').html(result);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    }
+
+</script>

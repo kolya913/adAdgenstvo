@@ -40,6 +40,10 @@ namespace adAdgenstvo.Models.DataBaseModels
             {
                 Name = serviceEM.Name;
             }
+            if (serviceEM.ServiceType != null)
+            {
+                ServiceType = serviceEM.ServiceType;
+            }
             return this;
         }
 
