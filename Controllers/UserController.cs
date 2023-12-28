@@ -30,7 +30,7 @@ namespace adAdgenstvo.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<ActionResult> Register()
+        public async Task<IActionResult> Register()
         {
             var positions = await _context.Positions.ToListAsync();
             ViewBag.Positions = new SelectList(positions, "Id", "PositionName");
@@ -42,6 +42,8 @@ namespace adAdgenstvo.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(ClientRM client)
         {
+            var positions = await _context.Positions.ToListAsync();
+            ViewBag.Positions = new SelectList(positions, "Id", "PositionName");
             if (ModelState.IsValid)
             {
                 if (_context.Users.Any(u => u.Email == client.Email))
@@ -49,15 +51,20 @@ namespace adAdgenstvo.Controllers
                     ModelState.AddModelError("Email", "Адрес почты уже занят");
                     return View(client);
                 }
-                if (!string.IsNullOrEmpty(client.Inn) && _context.Users.Any(u => u.Inn == client.Inn))
+                if (!string.IsNullOrEmpty(client.Inn) && client.Inn != null && _context.Users.Any(u => u.Inn!=null && u.Inn == client.Inn))
                 {
                     ModelState.AddModelError("Inn", "Инн не верный");
                     return View(client);
                 }
                 User user = new User(client);
-                await _context.Users.AddAsync(user);
+                _context.Users.Add(user);
                 await _context.SaveChangesAsync();
-                if (User.IsInRole("Agent") || User.IsInRole("Admin"))
+                var userRole = await _context.Roles.FirstOrDefaultAsync(r => r.Id == user.RoleId);
+                if (userRole == null)
+                {
+                    user.Role = userRole;
+                }
+                    if (User.IsInRole("Agent") || User.IsInRole("Admin"))
                 {
                     TempData["SuccessMessage"] = "Пользователь создан";
                     return View();
@@ -88,13 +95,16 @@ namespace adAdgenstvo.Controllers
                     await Authenticate(user);
                     if (TempData.TryGetValue("ReturnUrl", out var returnUrl) && !string.IsNullOrEmpty(returnUrl.ToString()))
                     {
+                        string returnUrlStr = returnUrl.ToString();
                         TempData.Remove("ReturnUrl");
-                        return Redirect(returnUrl.ToString());
+                        if (!returnUrlStr.Contains("Login") && !returnUrlStr.Contains("Register"))
+                        {
+                            return Redirect(returnUrlStr);
+                        }
                     }
-
                     return RedirectToAction("Index", "Home");
                 }
-                ModelState.AddModelError(string.Empty, "Не правильный адрес почта или пароль");
+                TempData["ErrorMessage"] = "Ошибка ввода почты либо пароля";
             }
             return View(userLogin);
         }
@@ -125,7 +135,10 @@ namespace adAdgenstvo.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             var userIdClaim = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
+            if (User.IsInRole("Client"))
+            {
+                return View(new UserEM(await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == userIdClaim)));
+            }
             var user = await _context.Users.Include(u => u.Role).Include(u => u.Position).FirstOrDefaultAsync(u => u.Id == id);
             var positions = await _context.Positions.ToListAsync();
             ViewBag.Positions = new SelectList(positions, "Id", "PositionName");
@@ -136,7 +149,7 @@ namespace adAdgenstvo.Controllers
                 return View();
             }
 
-            if (User.IsInRole("Client") || (User.IsInRole("Agent") && (user.Position == null || user.Id == userIdClaim)) || User.IsInRole("Admin"))
+            if ((User.IsInRole("Agent") && (user.Position == null || user.Id == userIdClaim)) || User.IsInRole("Admin"))
             {
                 UserEM editUser = new UserEM(user);
                 return View(editUser);
@@ -147,7 +160,7 @@ namespace adAdgenstvo.Controllers
         }
 
         [HttpPost]
-        //[AutoValidateAntiforgeryToken] // TODO: autovalidateanti...
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UserEM editModel)
         {
             if (ModelState.IsValid)
@@ -169,7 +182,7 @@ namespace adAdgenstvo.Controllers
 
         [Authorize(Roles = "Admin, Agent")]
         public async Task<IActionResult> UsersPartial(string? searchName = null, string? searchSurname = null,
-            string? searchEmail = null, string? searchPhoneNumber = null, string? searchCompanyName = null, string? searchInn = null)
+    string? searchEmail = null, string? searchPhoneNumber = null, string? searchCompanyName = null, string? searchInn = null)
         {
             IQueryable<User> usersQuery = _context.Users.Include(u => u.Role);
             Console.WriteLine($"Is Admin: {User.IsInRole("Admin")}, Is Agent: {User.IsInRole("Agent")}");
@@ -180,17 +193,20 @@ namespace adAdgenstvo.Controllers
 
             if (!string.IsNullOrEmpty(searchName))
             {
-                usersQuery = usersQuery.Where(u => u.Name.Contains(searchName));
+                var lowerCaseSearchName = searchName.ToLower();
+                usersQuery = usersQuery.Where(u => u.Name.ToLower().Contains(lowerCaseSearchName));
             }
 
             if (!string.IsNullOrEmpty(searchSurname))
             {
-                usersQuery = usersQuery.Where(u => u.Patronymic.Contains(searchSurname));
+                var lowerCaseSearchSurname = searchSurname.ToLower();
+                usersQuery = usersQuery.Where(u => u.Patronymic.ToLower().Contains(lowerCaseSearchSurname));
             }
 
             if (!string.IsNullOrEmpty(searchEmail))
             {
-                usersQuery = usersQuery.Where(u => u.Email.Contains(searchEmail));
+                var lowerCaseSearchEmail = searchEmail.ToLower();
+                usersQuery = usersQuery.Where(u => u.Email.ToLower().Contains(lowerCaseSearchEmail));
             }
 
             if (!string.IsNullOrEmpty(searchPhoneNumber))
@@ -200,7 +216,8 @@ namespace adAdgenstvo.Controllers
 
             if (!string.IsNullOrEmpty(searchCompanyName))
             {
-                usersQuery = usersQuery.Where(u => u.NameCompany.Contains(searchCompanyName));
+                var lowerCaseSearchCompanyName = searchCompanyName.ToLower();
+                usersQuery = usersQuery.Where(u => u.NameCompany.ToLower().Contains(lowerCaseSearchCompanyName));
             }
 
             if (!string.IsNullOrEmpty(searchInn))
@@ -213,7 +230,8 @@ namespace adAdgenstvo.Controllers
             return PartialView("UsersPartial", users);
         }
 
-        [Authorize(Roles = "Admin, Agent")]
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> DeleteUser(int userId)
         {

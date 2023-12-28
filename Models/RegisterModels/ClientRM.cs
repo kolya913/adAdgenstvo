@@ -9,8 +9,7 @@ namespace adAdgenstvo.Models.RegisterModel
         public required string Email { get; set; }
 
         [Required]
-        [StringLength(64, MinimumLength = 6, ErrorMessage = "Пароль от 6 до 64 символов")]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,64}$", ErrorMessage = "Пароль состоит из латинских букв, цифр и спецзнаков. Как минимум должна быть одна заглавная буква и один спецзнак.")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,64}$", ErrorMessage = "Пароль(от 6 до 64) состоит из латинских букв, цифр и спецзнаков. Как минимум должна быть одна заглавная буква и один спецзнак.")]
         [DataType(DataType.Password)]
         public required string Password { get; set; }
         
@@ -30,9 +29,9 @@ namespace adAdgenstvo.Models.RegisterModel
         [RegularExpression(@"^[a-zA-Zа-яА-Я]+$", ErrorMessage = "Фамилия должно состоять только из кириллических или латинских букв.")]
         public required string LastName { get; set; }
        
-        [StringLength(12, MinimumLength = 10, ErrorMessage = "ИНН должен содержать от 10 до 12 цифр.")]
+
         [RegularExpression(@"^\d+$", ErrorMessage = "ИНН должен состоять только из цифр.")]
-        public virtual string? Inn { get; set; }
+        public string? Inn { get; set; }
 
         public int? PositionId { get; set; }
     }

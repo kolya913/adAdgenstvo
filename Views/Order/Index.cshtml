@@ -5,7 +5,22 @@
 @{
     ViewData["Title"] = "Index";
 }
+<style>
+    .flex-container {
+        display: flex;
+        flex-direction: row;
+    }
 
+    .search-container {
+        flex: 1;
+        padding-right: 20px;
+    }
+
+    #orderTablePartialContainer {
+        flex: 3;
+    }
+
+</style>
 <p>
     <a asp-action="Index" asp-controller="User" class="btn btn-secondary">В кабинет</a>
     @if (User.IsInRole("Client"))
@@ -13,28 +28,28 @@
         <a asp-controller="Order" asp-action="Create" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)" class="btn btn-danger m-1">создать заявку</a>
     }
 </p>
+<div class="flex-container">
+    <div class="search-container">
+        <label for="searchId">Id:</label>
+        <input type="number" id="searchId" />
+        <br />
+        <label for="searchClientId">ClientId:</label>
+        <input type="number" id="searchClientId" />
+        <br />
+        <label for="searchAgentId">AgentId:</label>
+        <input type="number" id="searchAgentId" />
+        <br />
+        <label for="searchStatus">Status:</label>
+        <input type="text" id="searchStatus" />
+        <br />
+        <label for="searchNullAgent">Нету агента</label>
+        <input type="checkbox" id="searchNullAgent" />
 
-<div>
-    <label for="searchId">Id:</label>
-    <input type="number" id="searchId" />
+    </div>
 
-    <label for="searchClientId">ClientId:</label>
-    <input type="number" id="searchClientId" />
-
-    <label for="searchAgentId">AgentId:</label>
-    <input type="number" id="searchAgentId" />
-
-    <label for="searchStatus">Status:</label>
-    <input type="text" id="searchStatus" />
-
-    <label for="searchNullAgent">Null Agent:</label>
-    <input type="checkbox" id="searchNullAgent" />
+    <div id="orderTablePartialContainer">
+    </div>
 </div>
-
-<div id="orderTablePartialContainer">
-    @await Html.PartialAsync("_OrderTablePartial", Model)
-</div>
-
 @section Scripts {
     <script>
         function loadOrders() {
@@ -73,68 +88,3 @@
         });
     </script>
 }
-
-
-
-@* <table class="table">
-    <thead>
-        <tr>
-            <th>
-                Дата создания
-            </th>
-            <th>
-                Статус
-            </th>
-            <th>
-                Клиент
-            </th>
-            <th>
-                Агент
-            </th>
-            <th>
-                Текст заказа
-            </th>
-            <th>
-                Действия
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @item.DateCreate
-            </td>
-            <td>
-                @item.Status
-            </td>
-            <td>
-                    <text>@item.Client.Id | @item.Client.Name @item.Client.Lastname </text>
-            </td>
-            <td>
-                @if(item.Agent != null)
-                    {
-                        <text>@item.Agent.Id | @item.Agent.Name @item.Agent.Lastname </text>
-                    }
-                    else
-                    {
-                        <text>не назначен</text>
-                    }
-            </td>
-            <td>
-                @item.Text
-            </td>
-            <td>
-                    @if(User.IsInRole("Client"))
-                    {
-
-                    }
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Редактировать</a>
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Информация</a>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Отменить</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
- *@

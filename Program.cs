@@ -25,7 +25,7 @@ namespace adAdgenstvo
                 {
                     options.LoginPath = "/User/Login";
                     options.LogoutPath = "/User/Logout";
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(3);
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
                 });
 
             var app = builder.Build();

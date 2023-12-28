@@ -1,6 +1,12 @@
 ﻿@model List<adAdgenstvo.Models.DataBaseModels.PriceService>
 
-<table class="table">
+@if(Model == null)
+{
+    <h1>NULL!!!!!!!!!!!!!!!!!!!!!!!!</h1>
+}
+else
+{
+    <table class="table">
     <thead>
         <tr>
             <th>
@@ -50,3 +56,5 @@
         }
     </tbody>
 </table>
+
+}

@@ -1,29 +1,53 @@
-﻿
-@model List<adAdgenstvo.Models.DataBaseModels.PriceService>
+﻿@model List<adAdgenstvo.Models.DataBaseModels.PriceService>
 
 @{
     ViewData["Title"] = "Цены";
 }
 
+<style>
+    .content-container {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .search-container {
+        flex: 0 0 300px;
+        padding-right: 20px;
+    }
+
+    .results-container {
+        flex-grow: 1;
+    }
+</style>
+
+
 <h2>Цены</h2>
 <a asp-action="Index" asp-controller="User" class="btn btn-secondary">В кабинет</a>
 <a asp-action="Index" asp-controller="Service" class="btn btn-secondary">Все услуги</a>
 <a asp-action="Create" class="btn btn-success">Создать</a>
-
-<form id="searchForm" asp-action="Index" asp-controller="PriceServices" method="get">
-    <input type="hidden" name="id" value="@ViewData["CurrentId"]" />
-
-</form>
-
-<div id="searchResult">
+<div class="content-container">
+    <div class="search-container">
+        <form id="searchForm" asp-action="Index" asp-controller="PriceServices" method="get">
+            <label for="id">ID услуги:</label><br />
+            <input id="id" name="id" value="@ViewData["CurrentId"]?.ToString()" /><br />
+            <label for="priceServiceName">Имя услуги цены:</label><br />
+            <input id="priceServiceName" type="text" name="priceServiceName" /><br />
+            <label for="serviceName">Имя услуги:</label><br />
+            <input id="serviceName" type="text" name="serviceName" /><br />
+            <label for="priceServiceId">ID услуги цены:</label><br />
+            <input id="priceServiceId" type="number" name="priceServiceId" /><br />
+            <button type="submit" onclick="searchPriceServices(); return false;">Поиск</button>
+        </form>
+        </div>
+        <div id="searchResult">
+        </div>
 </div>
-
-
-
-@Html.Partial("_PriceTable", Model)
 
 <script>
 
+    document.addEventListener("DOMContentLoaded", function () {
+        searchPriceServices();
+    });
     function clearSearch() {
         $('#searchForm input[name="searchString"]').val('');
         searchPriceServices();
@@ -52,13 +76,15 @@
     }
 
     function searchPriceServices() {
-        var searchString = $('#searchForm input[name="searchString"]').val();
+        var priceServiceName = $('#searchForm input[name="priceServiceName"]').val();
+        var serviceName = $('#searchForm input[name="serviceName"]').val();
+        var priceServiceId = $('#searchForm input[name="priceServiceId"]').val();
         var id = $('#searchForm input[name="id"]').val();
 
         $.ajax({
-            url: '@Url.Action("Search", "PriceServices")',
+            url: '@Url.Action("SearchResults", "PriceServices")',
             type: 'GET',
-            data: { id: id, searchString: searchString },
+            data: { priceServiceName: priceServiceName, serviceName: serviceName, priceServiceId: priceServiceId, id: id },
             success: function (result) {
                 $('#searchResult').html(result);
             },

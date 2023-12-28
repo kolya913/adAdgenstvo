@@ -1,6 +1,5 @@
 ﻿using adAdgenstvo.Models;
 using adAdgenstvo.Models.DataBaseModels;
-using adAdgenstvo.Models.DataBaseModels;
 using adAdgenstvo.Models.EditModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +9,7 @@ using System.Security.Claims;
 
 namespace adAdgenstvo.Controllers
 {
+    [Authorize]
     public class OrderController : Controller
     {
         private readonly MDBContext _context;
@@ -21,33 +21,21 @@ namespace adAdgenstvo.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var orders = _context.Order.Include(o => o.Agent).Include(o => o.Client);
-            if (orders == null)
-            {
-                TempData["ErrorMessage"] = "Ничего не найдено";
-                return View(null);
-            }
-            else 
-            { 
-                return View(await orders.ToListAsync());
-            }
+            return View();
             
         }
 
 
         [HttpGet]
-        public IActionResult LoadOrders(int? searchId, int? searchClientId, int? searchAgentId, string searchStatus, bool searchNullAgent)
+        public IActionResult LoadOrders(int? searchId, int? searchClientId, int? searchAgentId, string? searchStatus, bool searchNullAgent)
         {
-            
             if (User.IsInRole("Client"))
             {
                 searchClientId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
             }
             else if (User.IsInRole("Agent"))
             {
                 searchAgentId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
             }
             var orders = _context.Order.Include(o => o.Agent).Include(o => o.Client).AsQueryable();
 
@@ -55,34 +43,46 @@ namespace adAdgenstvo.Controllers
             {
                 orders = orders.Where(o => o.ClientId == searchClientId);
             }
-
-
             if (searchId.HasValue)
             {
                 orders = orders.Where(o => o.Id == searchId);
             }
-
-
             if (searchAgentId.HasValue)
             {
-                if (searchNullAgent)
-                {
-                    orders = orders.Where(o => o.AgentId == null);
-                }
-                else
-                {
-                    orders = orders.Where(o => o.AgentId == searchAgentId);
-                }
+                orders = orders.Where(o => o.AgentId == searchAgentId);
             }
-
             if (!string.IsNullOrEmpty(searchStatus))
             {
                 orders = orders.Where(o => o.Status == searchStatus);
+            }
+           if (searchNullAgent)
+            {
+                orders = orders.Where(o => o.AgentId == null);
             }
             return PartialView("_OrderTablePartial", orders.ToList());
         }
 
 
+
+        /*public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null || _context.Order == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Order
+                .Include(o => o.Agent)
+                .Include(o => o.Client)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            var contract = await _context.Contract.FirstOrDefaultAsync(c => c.Id == order.Id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
+        }*/
 
         public async Task<IActionResult> Details(int? id)
         {
@@ -95,12 +95,22 @@ namespace adAdgenstvo.Controllers
                 .Include(o => o.Agent)
                 .Include(o => o.Client)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (order == null)
             {
                 return NotFound();
             }
 
-            return View(order);
+            var contract = await _context.Contract
+                .FirstOrDefaultAsync(c => c.OrderId == order.Id);
+
+            var viewModel = new OrderContractViewModel
+            {
+                Order = order,
+                Contract = contract
+            };
+
+            return View(viewModel);
         }
 
         public async Task<IActionResult> Create(int? id)
@@ -118,7 +128,6 @@ namespace adAdgenstvo.Controllers
                     return View(null);
                 }
             }
-            ViewBag.ClientId = 1;
             List<PriceService> services = await _context.PriceService.ToListAsync();
             var model = new CreateRequisitionModel
             {
@@ -160,9 +169,13 @@ namespace adAdgenstvo.Controllers
                     requisition.OrderId = order.Id;
                     requisition.PriceServiceId = selectedServiceId;
                     await _context.OrderServicePrice.AddAsync(requisition);
-                    await _context.SaveChangesAsync();
+                    
                 }
+                TempData["SuccessMessage"] = "Заявка создана";
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Order");
             }
+            TempData["ErrorMessage"] = "Заявка создана";
             model.Services = await _context.PriceService.ToListAsync();
             return View(model);
         }
@@ -211,9 +224,12 @@ namespace adAdgenstvo.Controllers
                     var order = _context.Order.Find(orderem.Id);
                     order.AgentId = orderem.AgentId;
                     order.Text = orderem.Text;
+                    if (order.Status == "new")
+                    {
+                        order.Status = "workProject";
+                    }
                     _context.Update(order);
                     await _context.SaveChangesAsync();
-                    ChangeStatusOrderVnyrt(order.Id, "workProject");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -226,6 +242,7 @@ namespace adAdgenstvo.Controllers
                         throw;
                     }
                 }
+                TempData["SuccessMessages"] = "Успешно";
                 return RedirectToAction(nameof(Index));
             }
             ViewData["AgentId"] = new SelectList(_context.Users.Where(u => u.RoleId == 2).Select(u => new
@@ -233,6 +250,7 @@ namespace adAdgenstvo.Controllers
                 Id = u.Id,
                 FullName = $"{u.Id} | {u.Name} {u.Lastname}"
             }), "Id", "FullName");
+            TempData["ErrorMessages"] = "Не успешно";
             return View(orderem);
         }
 
@@ -295,9 +313,16 @@ namespace adAdgenstvo.Controllers
             return Ok(new { message = "Заказ успешно отменен" });
         }
 
+        [Authorize(Roles = "Agent")]
         public IActionResult EditLayout(int orderId)
         {
             var existingProject = _context.Projects.Include(lp => lp.Photos).FirstOrDefault(lp => lp.OrderId == orderId);
+            var order = _context.Order.Find(orderId);
+            if(order.Status == "complete" || order.Status == "canceled")
+            {
+                TempData["ErrorMessage"] = "Нельзя редактировать";
+                return View();
+            }
             if (existingProject != null)
             {
                 return View(existingProject);
@@ -309,6 +334,8 @@ namespace adAdgenstvo.Controllers
             return View(newProject);
         }
 
+
+        [Authorize(Roles = "Agent")]
         [HttpPost]
         public IActionResult EditLayout(LayoutProject updatedProject, List<IFormFile> files)
         {
@@ -339,12 +366,11 @@ namespace adAdgenstvo.Controllers
                     if(orderStatus.Status == "payment")
                     {
                         ChangeStatusOrderVnyrt(updatedProject.OrderId, "run");
-                    }
-                    else
+                    }else if(orderStatus.Status == "reWorkProject")
                     {
                         ChangeStatusOrderVnyrt(updatedProject.OrderId, "needAproved");
                     }
-                    
+                    TempData["SuccessMessage"] = "Успешно";
                     return RedirectToAction("Index");
                 }
                 else
@@ -367,6 +393,7 @@ namespace adAdgenstvo.Controllers
                         };
                         _context.Photos.Add(newPhoto);
                     }
+                    TempData["SuccessMessage"] = "Успешно";
                     _context.SaveChanges();
                 }
             }
@@ -376,13 +403,19 @@ namespace adAdgenstvo.Controllers
         public void ChangeStatusOrderVnyrt(int orderId, string status)
         {
             var order = _context.Order.Find(orderId);
+            var contract = _context.Contract.FirstOrDefault(x => x.OrderId == orderId);
             if (order != null)
             {
                 order.Status = status;
+                if(status == "run")
+                {
+                    contract.Status = "comlete";
+                }
                 _context.SaveChanges();
             }
         }
-        public IActionResult ShowLayout(int orderId, string? doing)
+
+        public async Task<IActionResult> ShowLayout(int orderId)
         {
             var layoutProject = _context.Projects
                 .Include(lp => lp.Photos)
@@ -392,8 +425,9 @@ namespace adAdgenstvo.Controllers
             {
                 return View(null);
             }
-            if (doing != null)
-                TempData["doing"] = doing;
+            Order order = await _context.Order.FindAsync(orderId);
+            if(order.Status == "needAproved")
+                    TempData["doing"] = order.Status;
             return View(layoutProject);
         }
 
@@ -401,20 +435,14 @@ namespace adAdgenstvo.Controllers
         {
 
             var order = _context.Order.Find(orderId);
-            var contract = _context.Contract.FirstOrDefault(lp => lp.OrderId == orderId && status != "canceled" && status != "complete");
-
-            if (order != null && contract != null)
+            if (order != null && order.Status != "canceled" && order.Status != "complete")
             {
                
-                contract.Status = status;
                 order.Status = status;
                 _context.SaveChanges();
+                TempData["SuccessMessage"] = "Принято";
             }
-            else if (order != null && contract == null)
-            {
-                order.Status = status;
-                _context.SaveChanges();
-            }
+            
             return RedirectToAction("Index");
         }
 
@@ -438,12 +466,14 @@ namespace adAdgenstvo.Controllers
             contract.DateEndCompany = ToUtcDateTime(contract.DateEndCompany);
             if (ModelState.IsValid)
             {
-                contract.Status = "needContractSign";
+                contract.Status = "created";
                 _context.Contract.Add(contract);
                 _context.SaveChanges();
-
+                ChangeStatusOrderVnyrt(contract.OrderId, "needContractSign");
+                TempData["SuccessMessage"] = "Договор создан";
+                RedirectToAction("Index", "Order");
             }
-            ChangeStatusOrderVnyrt(contract.OrderId, "needContractSign");
+            TempData["ErrorMessage"] = "Договор не создан";
             return View(contract);
         }
         private DateTime ToUtcDateTime(DateTime dateTime)
@@ -471,6 +501,7 @@ namespace adAdgenstvo.Controllers
                 ChangeStatusOrder(orderId, "payment");
                 contract.Status = "payment";
                 _context.SaveChanges();
+                TempData["SuccessMessage"]="Оплачено";
             }
             return RedirectToAction("Index");
         }

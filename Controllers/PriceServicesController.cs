@@ -19,28 +19,46 @@ namespace adAdgenstvo.Controllers
         }
 
 
-        public IActionResult Index(int? id, string searchString)
+        public IActionResult Index(int? id)
         {
             ViewData["CurrentId"] = id;
 
-            IQueryable<PriceService> priceServices = _context.PriceService.Include(p => p.Service);
+            
+            return View();
+        }
+
+
+
+        public IActionResult SearchResults(string? priceServiceName, string? serviceName, int? priceServiceId, int? id)
+        {
+            var query = _context.PriceService.Include(p => p.Service).AsQueryable();
+
+            if (!string.IsNullOrEmpty(priceServiceName))
+            {
+                query = query.Where(p => p.Name.ToLower().Contains(priceServiceName.ToLower()));
+            }
+
+            if (!string.IsNullOrEmpty(serviceName))
+            {
+                query = query.Where(p => p.Service.Name.ToLower().Contains(serviceName.ToLower()));
+            }
+
+            if (priceServiceId.HasValue)
+            {
+                query = query.Where(p => p.Id == priceServiceId.Value);
+            }
 
             if (id.HasValue)
             {
-                priceServices = priceServices.Where(p => p.ServiceId == id);
+                query = query.Where(p => p.ServiceId == id.Value);
             }
 
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                priceServices = priceServices.Where(p => p.Name.Contains(searchString) || p.Service.Name.Contains(searchString));
-            }
+            var results = query.ToList();
 
-            List<PriceService> listPriceService = priceServices.ToList();
-
-            return View(listPriceService);
+            return PartialView("_PriceTable", results);
         }
 
-   
+
 
 
 

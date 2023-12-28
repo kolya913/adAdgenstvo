@@ -1,4 +1,5 @@
 using adAdgenstvo.Models.EditModels;
+using adAdgenstvo.Models.LoginModels;
 using adAdgenstvo.Models.RegisterModel;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -36,7 +37,7 @@ namespace adAdgenstvo.Models.DataBaseModels
             Inn = client.Inn;
             NameCompany = client.NameCompany;
             Password = client.Password;
-            if(client.PositionId == null)
+            if (client.PositionId == null)
             {
                 RoleId = 3;
             }
@@ -91,18 +92,15 @@ namespace adAdgenstvo.Models.DataBaseModels
                 NameCompany = userEM.NameCompany;
             }
 
-            if (userEM.RoleId != null)
+            if (userEM.PositionId == null)
             {
-                RoleId = (int)userEM.RoleId;
+                RoleId = 3;
             }
-
-            if (userEM.PositionId != null)
+            else
             {
+                RoleId = (int)userEM.PositionId;
                 PositionId = userEM.PositionId;
             }
-
-
-
             return this;
         }
 

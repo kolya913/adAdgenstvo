@@ -51,46 +51,53 @@
                     @item.Text
                 </td>
                 <td>
-                    @if (item.Status == "run")
-                    {
-                        <a href="@Url.Action("Stop", "Order", new { orderId = item.Id })" class="btn btn-danger">Завершить</a>
-                    }
-                    @if (item.Status == "needAproved")
-                    {
-                        <a href="@Url.Action("ShowLayout", "Order", new { orderId = item.Id, doing="needAproved" })" class="btn btn-danger">Посмотреть макет</a>
-                    }
-                    @if (User.IsInRole("Client"))
-                    {
-                        if (item.Agent == null)
-                        {
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
-                        }
-                        @if (item.Status == "needContractSign")
-                        {
-                            <a href="@Url.Action("ViewContract", "Order", new { orderId = item.Id })" class="btn btn-danger">Подписать договор</a>
-                        }
-                        @if (item.Status == "needPayment")
-                        {
-                            <a href="@Url.Action("PayContract", "Order", new { orderId = item.Id })" class="btn btn-danger">Оплатить</a>
-                        }
-                        <a href="javascript:void(0);" onclick="cancelOrder(@item.Id)" class="btn btn-danger">Отменить</a>
-
-                    }
-                    else if (User.IsInRole("Agent"))
-                    {
-                        <a href="@Url.Action("EditLayout", "Order", new { orderId = item.Id })" class="btn btn-danger">Загрузить макет</a>
-                        if (item.Status == "clientAproved")
-                        {
-                            <a href="@Url.Action("CreateContract", "Order", new { orderId = item.Id })" class="btn btn-danger">Создать договор</a>
-                        }
-
-
-                    }
-                    else if (User.IsInRole("Admin"))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Назначить сотрудника</a>
-                    }
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Информация</a>
+                    @if (item.Status != "canceled")
+                    {
+                             <a href="@Url.Action("ShowLayout", "Order", new { orderId = item.Id })" class="btn btn-danger">Посмотреть макет</a>
+                        @if (item.Status == "run")
+                        {
+                            <a href="@Url.Action("ChangeStatusOrder", "Order", new { orderId = item.Id, status="complete" })" class="btn btn-danger">Завершить</a>
+                        }
+                        @if (User.IsInRole("Client"))
+                        {
+                            if (item.Agent == null)
+                            {
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
+                            }
+                            @if (item.Status == "needContractSign")
+                            {
+                                <a href="@Url.Action("ViewContract", "Order", new { orderId = item.Id })" class="btn btn-danger">Подписать договор</a>
+                            }
+                            @if (item.Status == "needPayment")
+                            {
+                                <a href="@Url.Action("PayContract", "Order", new { orderId = item.Id })" class="btn btn-danger">Оплатить</a>
+                            }
+                            @if (item.Status != "complete")
+                            {
+                                <a href="javascript:void(0);" onclick="cancelOrder(@item.Id)" class="btn btn-danger">Отменить</a>
+                            }
+                        }
+                        else if (User.IsInRole("Agent"))
+                        {
+                            @if (item.Status != "complete")
+                            {
+                                <a href="@Url.Action("EditLayout", "Order", new { orderId = item.Id })" class="btn btn-danger">Редактировать макет</a>
+                            }
+                            
+                            if (item.Status == "clientAproved")
+                            {
+                                <a href="@Url.Action("CreateContract", "Order", new { orderId = item.Id })" class="btn btn-danger">Создать договор</a>
+                            }
+
+
+                        }
+                        else if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Назначить сотрудника</a>
+                        }
+                    }
+                   
                 </td>
             </tr>
         }

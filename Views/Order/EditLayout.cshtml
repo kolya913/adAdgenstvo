@@ -23,9 +23,11 @@
     }
 </style>
 
-<<h2>Проект №@Model.OrderId</h2>
 
-<form asp-action="EditLayout" method="post" enctype="multipart/form-data">
+@if(Model != null)
+{
+    <h2>Проект №@Model.OrderId</h2>
+    <form asp-action="EditLayout" method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="OrderId" />
 
@@ -72,6 +74,8 @@
 
     <button type="submit" class="btn btn-primary">Save Changes</button>
 </form>
+}
+<a asp-action="Index" asp-controller="Order" class="btn btn-secondary">К заказам</a>
 
 @section scripts {
     <script>

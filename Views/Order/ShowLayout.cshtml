@@ -4,7 +4,6 @@
     var doing = TempData["doing"] as string;
 }
 
-
 <style>
     .photo-column {
         max-width: 75%;
@@ -39,7 +38,6 @@
             @foreach (var photo in Model.Photos)
             {
                 <div>
-                    <img src="@Url.Content("~/" + photo.Path)" alt="@photo.Title" />
                     <div class="photo-caption">@photo.Title</div>
                     <a href="@Url.Content("~/" + photo.Path)" class="btn btn-primary download-button" download>Download</a>
                 </div>
@@ -50,7 +48,7 @@
     {
         <p>No photos available for the project.</p>
     }
-    @if (doing == "needAproved")
+    @if (doing == "needAproved" && User.IsInRole("Client"))
     {
         <form asp-action="ChangeStatusOrder" asp-route-orderId="@Model.OrderId" asp-route-status="clientAproved" method="post" style="display: inline;">
             <button type="submit" class="btn btn-success">Согласиться</button>

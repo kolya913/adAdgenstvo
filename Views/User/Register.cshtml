@@ -8,14 +8,17 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <form method="post" id="registrationForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
                 <div class="form-group">
-                    <label for="Email">Адрес почты:</label>
-                    <input type="email" id="Email" name="Email" class="form-control" required />
+                    <label asp-for="Email" for="Email">Адрес почты:</label>
+                    <input asp-for="Email" type="email" id="Email" name="Email" class="form-control" required />
+                    <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="Password">Пароль:</label>
-                    <input type="password" id="Password" name="Password" class="form-control" required />
-                    <small class="form-text text-danger">Пароль должен содержать от 6 до 64 символов, включая латинские буквы, цифры и спецзнаки. Как минимум должна быть одна заглавная буква и один спецзнак.</small>
+                    <label asp-for="Password" for="Password">Пароль:</label>
+                    <input asp-for="Password" type="password" id="Password" name="Password" class="form-control" required />
+                    <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label for="ConfirmPassword">Подтвердите пароль:</label>
@@ -23,28 +26,33 @@
                     <small id="passwordHelp" class="form-text"></small>
                 </div>
                 <div class="form-group">
-                    <label for="PhoneNumber">Номер телефона:</label>
-                    <input type="tel" id="PhoneNumber" name="PhoneNumber" class="form-control" required />
+                    <label asp-for="PhoneNumber" for="PhoneNumber">Номер телефона:</label>
+                    <input asp-for="PhoneNumber" type="tel" id="PhoneNumber" name="PhoneNumber" class="form-control" required />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="Name">Имя:</label>
-                    <input type="text" id="Name" name="Name" class="form-control" required />
+                    <label asp-for="Name" for="Name">Имя:</label>
+                    <input asp-for="Name" type="text" id="Name" name="Name" class="form-control" required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="NameCompany">Название компании:</label>
-                    <input type="text" id="NameCompany" name="NameCompany" class="form-control" />
+                    <label asp-for="NameCompany" for="NameCompany">Название компании:</label>
+                    <input asp-for="NameCompany" type="text" id="NameCompany" name="NameCompany" class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label for="Patronymic">Отчество:</label>
-                    <input type="text" id="Patronymic" name="Patronymic" class="form-control" />
+                    <label asp-for="Patronymic" for="Patronymic">Отчество:</label>
+                    <input asp-for="Patronymic" type="text" id="Patronymic" name="Patronymic" class="form-control" />
+                    <span asp-validation-for="Patronymic" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="LastName">Фамилия:</label>
-                    <input type="text" id="LastName" name="LastName" class="form-control" required />
+                    <label asp-for="LastName" for="LastName">Фамилия:</label>
+                    <input asp-for="LastName" type="text" id="LastName" name="LastName" class="form-control" required />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="Inn">ИНН:</label>
-                    <input type="text" id="Inn" name="Inn" class="form-control" />
+                    <label asp-for="Inn" for="Inn">ИНН:</label>
+                    <input asp-for="Inn" type="text" id="Inn" name="Inn" class="form-control" />
+                    <span asp-validation-for="Inn" class="text-warning"></span>
                     <small class="form-text text-warning">Инн не обязателен. Он используется для высталения счета. Его можно будет ввести потом.</small>
                 </div>
                 @if (User.IsInRole("Admin") && ViewBag.Positions != null)
@@ -52,7 +60,7 @@
                     <div class="form-group">
                         <label asp-for="PositionId">Position:</label>
                         <select asp-for="PositionId" asp-items="@(ViewBag.Positions)" class="form-control"></select>
-                        <span asp-validation-for="PositionId"></span>
+                        <span asp-validation-for="PositionId" class="text-danger"></span>
                     </div>
                 }
                 <br>
@@ -63,32 +71,38 @@
         </div>
     </div>
 </div>
-
+<small class="form-text text-danger">Пароль должен содержать от 6 до 64 символов, включая латинские буквы, цифры и спецзнаки. Как минимум должна быть одна заглавная буква и один спецзнак.</small>
 
 
 <script>
     var registrationForm = document.getElementById("registrationForm");
-    var email = document.getElementById("Email");
     var password = document.getElementById("Password");
     var confirmPassword = document.getElementById("ConfirmPassword");
-    var phoneNumber = document.getElementById("PhoneNumber");
-    var name = document.getElementById("Name");
-    var lastName = document.getElementById("LastName");
-    var inn = document.getElementById("Inn");
     var passwordHelp = document.getElementById("passwordHelp");
+    var isPasswordValid = false;
 
     function validatePassword() {
         if (password.value !== confirmPassword.value) {
             passwordHelp.textContent = "Пароли не совпадают.";
             passwordHelp.style.color = "red";
+            isPasswordValid = false;
         } else {
             passwordHelp.textContent = "Пароли совпадают.";
             passwordHelp.style.color = "green";
+            isPasswordValid = true;
         }
     }
 
     password.onchange = validatePassword;
     confirmPassword.onkeyup = validatePassword;
 
+    function onSubmitForm(event) {
+        if (!isPasswordValid) {
+            event.preventDefault();
+            alert('Пароли не совпадают. Пожалуйста, исправьте перед отправкой.');
+        }
+    }
+
     registrationForm.addEventListener("submit", onSubmitForm);
 </script>
+

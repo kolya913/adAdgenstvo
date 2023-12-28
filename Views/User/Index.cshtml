@@ -11,11 +11,7 @@
             <div class="mb-3 d-flex flex-wrap justify-content-center">
                 <a asp-controller="User" asp-action="Edit" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)" class="btn btn-warning m-1">Профиль</a>
                 <a asp-controller="Order" asp-action="Index" class="btn btn-success m-1">Заказы/Заявки</a>
-                @if (User.IsInRole("Client"))
-                {
-                    @* <a asp-controller="Order" asp-action="Create" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)" class="btn btn-danger m-1">создать заявку</a> *@
-                }
-                @if (User.IsInRole("Agent") || User.IsInRole("Admin"))
+                @if (User.IsInRole("Agent"))
                 {
                     <a asp-controller="User" asp-action="Register" class="btn btn-danger m-1">Создать клиента</a>
                     <a asp-controller="User" asp-action="Users" class="btn btn-danger m-1">Список клиентов</a>
@@ -23,7 +19,7 @@
                 }
                 @if(User.IsInRole("Admin"))
                 {
-                    <a asp-controller="Profile" asp-action="ViewWorkers" class="btn btn-danger m-1">Список работников</a>
+                    <a asp-controller="User" asp-action="Users" class="btn btn-danger m-1">Список работников</a>
                     <a asp-controller="User" asp-action="Register" class="btn btn-danger m-1">Регистрация работников</a>
                 }
             </div>

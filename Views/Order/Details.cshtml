@@ -1,48 +1,28 @@
-﻿@model adAdgenstvo.Models.DataBaseModels.Order
+﻿@model adAdgenstvo.Models.OrderContractViewModel
 
-@{
-    ViewData["Title"] = "Details";
+<h2>Details</h2>
+
+<h3>Order</h3>
+<p>ID: @Model.Order.Id</p>
+<p>Date Create: @Model.Order.DateCreate</p>
+<p>Client ID: @Model.Order.ClientId</p>
+<p>Agent ID: @Model.Order.AgentId</p>
+<p>Status: @Model.Order.Status</p>
+<p>Text: @Model.Order.Text</p>
+<h3>Contract</h3>
+@if (Model.Contract != null)
+{
+    <p>ID: @Model.Contract.Id</p>
+    <p>Order ID: @Model.Contract.OrderId</p>
+    <p>Price: @Model.Contract.Price</p>
+    <p>Date Start Company: @Model.Contract.DateStartCompany.ToString("dd/MM/yyyy")</p>
+    <p>Date End Company: @Model.Contract.DateEndCompany.ToString("dd/MM/yyyy")</p>
+    <p>Status: @Model.Contract.Status</p>
 }
-
-<h1>Details</h1>
-
+else
+{
+    <p>No contract available for this order.</p>
+}
 <div>
-    <h4>Order</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateCreate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateCreate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Client)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Client.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Agent)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Agent.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Text)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Text)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="btn btn-secondary">К заказам</a>
 </div>

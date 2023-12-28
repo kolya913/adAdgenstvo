@@ -5,6 +5,7 @@ namespace adAdgenstvo.Models.EditModels
 {
     public class UserEM
     {
+
         public int Id { get; set; }
 
         public string? Name { get; set; }
@@ -13,6 +14,7 @@ namespace adAdgenstvo.Models.EditModels
 
         public string? Lastname { get; set; }
 
+        [DataType(DataType.Password)]
         [StringLength(64, MinimumLength = 6, ErrorMessage = "Пароль от 6 до 64 символов")]
         public string? Password { get; set; }
 
@@ -21,8 +23,6 @@ namespace adAdgenstvo.Models.EditModels
 
         public string? PhoneNumber { get; set; }
 
-        [StringLength(12, MinimumLength = 10, ErrorMessage = "ИНН должен содержать от 10 до 12 цифр.")]
-        [RegularExpression(@"^\d+$", ErrorMessage = "ИНН должен состоять только из цифр.")]
         public string? Inn { get; set; }
 
         public string? NameCompany { get; set; }
